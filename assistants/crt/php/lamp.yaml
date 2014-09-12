@@ -1,4 +1,4 @@
-fullname: Apache, Mysql and PHP helper
+fullname: Apache httpd, MySQL and PHP with phpMyAdmin
 
 dependencies:
 - use: super.dependencies
@@ -75,3 +75,4 @@ run:
   - github: create_and_push
 - log_i: "Project location: $homedir/public_html/$basename"
 - log_i: "Web page: http://localhost/$basename"
+- log_i: "phpMyAdmin: http://localhost/phpMyAdmin/"

@@ -1,49 +1,30 @@
 #!/bin/bash
 
-MODULE_CONFIG=/etc/httpd/conf.modules.d/00-base.conf
+MODULE_CONF=/etc/httpd/conf.modules.d/00-base.conf
 USERDIR_CONF=/etc/httpd/conf.d/userdir.conf
-SAMPLE_PHPMYADMIN=/usr/share/phpMyAdmin/config.sample.inc.php
-NEW_PHPMYADMIN=/usr/share/phpMyAdmin/config.inc.php
+PHPMYADMIN_CONF=/etc/phpMyAdmin/config.inc.php
 PHP=/usr/bin/php
 
-# CORRECT POLICT
-
+# CORRECT POLICY
 echo "Checking SELinux..."
 SELINUX=`getenforce`
 echo "SELinux is: $SELINUX"
-#BEGIN-D-BUS
-# httpd activation
-echo "Activation httpd.service"
+
+echo "Enabling httpd.service"
 systemctl enable httpd.service
 
-# mysql activation
-echo "Actiovation mysqld.service"
+echo "Enabling and starting mysqld.service"
 systemctl enable mysqld.service
 systemctl restart mysqld.service
 
-#END D-BUS
-echo "Modify $NEW_PHPMYADMIN"
-if [ -f $NEW_PHPMYADMIN ]; then
-    echo "Already modified"
-else
-    cp $SAMPLE_PHPMYADMIN $NEW_PHPMYADMIN
-    if [ $? -ne 0 ]; then
-        echo "Problem with setting PHP MyAdmin"
-        exit 1
-    fi
-    sed -i "s|['auth_type'].*|['auth_type'] = 'http'|" $NEW_PHPMYADMIN
-fi
+grep "'auth_type'.*'cookie'" $PHPMYADMIN_CONF
 
-echo "Disable unique_id module"
-grep "#LoadModule unique_id_module" $MODULE_CONFIG
 if [ $? -eq 0 ]; then
-    echo "unique_id_module was already disabled"
-else
-    sed -i "s|LoadModule unique_id_module|#LoadModule unique_id_module|" $MODULE_CONFIG
-    echo "unique_id_module was disabled"
+echo "Enabling HTTP auth method in $PHPMYADMIN_CONF"
+    sed -i "s|['auth_type'].*|['auth_type'] = 'http'|" $PHPMYADMIN_CONF
 fi
 
-echo "Creating configuration file for apache web server"
+echo "Creating configuration file for Apache httpd"
 if [ ! -f "/etc/httpd/$1" ]; then
     if [ ! -f "/etc/httpd/conf.d/$1.conf" ]; then
         rm -f /tmp/$1.conf
@@ -62,15 +43,15 @@ else
 fi
 
 if [ -f $USERDIR_CONF ]; then
-    echo "Check whether UserDir is enabled"
+    echo "Checking whether UserDir is enabled"
     grep "UserDir disabled" $USERDIR_CONF
     if [ $? -eq 0 ]; then
-        echo "Userdir will be enabled"
+        echo "Enabling UserDir"
         sed -i "s|UserDir disabled||" $USERDIR_CONF
     fi
     grep "#UserDir public_html" $USERDIR_CONF
     if [ $? -eq 0 ]; then
-        echo "Userdir public_html is enabled"
+        echo "Setting UserDir to ~/public_html"
         sed -i "s|#UserDir public_html|UserDir public_html|" $USERDIR_CONF
     fi
     setsebool httpd_enable_homedirs 1 # Necessary for LAMP to work
