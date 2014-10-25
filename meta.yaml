@@ -1,0 +1,13 @@
+package_name: php
+version: 0.10.0dev
+license: GPLv2+
+authors: [Bohuslav Kabrda <bkabrda@redhat.com>, Jan Kaluza <jkaluza@redhat.com>]
+homepage: https://github.com/devassistant/dap-php
+summary: Perl assistants
+bugreports: https://github.com/devassistant/dap-php/issues
+dependencies:
+  - common_args
+  - eclipse
+  - vim
+description: |
+    Kickstarts new PHP projects and configures LAMP.
