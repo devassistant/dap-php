@@ -8,6 +8,7 @@ bugreports: https://github.com/devassistant/dap-php/issues
 dependencies:
   - common_args
   - eclipse
+  - git
   - vim
 description: |
     Kickstarts new PHP projects and configures LAMP.
