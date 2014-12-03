@@ -72,7 +72,9 @@ run:
 - if defined $github:
   - cl: cd "$homedir/public_html/$basename"
   - log_i: "Push on GitHub repository"
-  - github: create_and_push
+  - github:
+    - create_and_push
+    - reponame: $basename
 - log_i: "Project location: $homedir/public_html/$basename"
 - log_i: "Web page: http://localhost/$basename"
 - log_i: "phpMyAdmin: http://localhost/phpMyAdmin/"
