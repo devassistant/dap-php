@@ -75,6 +75,7 @@ run:
   - github:
     - create_and_push
     - reponame: $basename
+      login: $github
 - log_i: "Project location: $homedir/public_html/$basename"
 - log_i: "Web page: http://localhost/$basename"
 - log_i: "phpMyAdmin: http://localhost/phpMyAdmin/"
